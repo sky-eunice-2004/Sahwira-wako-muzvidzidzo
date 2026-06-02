@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<style>
+  .auth-wrap { max-width: 440px; margin: 3rem auto; }
+  .auth-title { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.3rem; }
+  .auth-sub { color: var(--text2); font-family: var(--mono); font-size: 0.85rem; margin-bottom: 2rem; }
+  .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: var(--text2); font-family: var(--mono); }
+</style>
+<div class="auth-wrap">
+  <div class="auth-title">Welcome back 👋</div>
+  <div class="auth-sub">// Login to your account</div>
+  <div class="form-card" style="max-width:100%">
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" name="username" required placeholder="your_username" autofocus>
+        {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" name="password" required placeholder="••••••••">
+      </div>
+      {% if form.non_field_errors %}
+        <div class="alert alert-error">{{ form.non_field_errors.0 }}</div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.75rem;">Login →</button>
+    </form>
+  </div>
+  <div class="auth-footer">No account? <a href="{% url 'register' %}">Register here</a></div>
+</div>
+{% endblock %}

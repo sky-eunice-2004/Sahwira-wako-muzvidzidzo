@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}Student Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>👋 Hey, {{ user.first_name|default:user.username }}</h1>
+  <p>// student dashboard · track your journey</p>
+</div>
+
+<div class="grid-3" style="margin-bottom:2rem;">
+  <div class="stat-box">
+    <div class="stat-num">{{ my_projects.count }}</div>
+    <div class="stat-label">My Projects</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num">{{ suggestions.count }}</div>
+    <div class="stat-label">Open Suggestions</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num">{{ taken_suggestions.count }}</div>
+    <div class="stat-label">Taken By You</div>
+  </div>
+</div>
+
+<div style="display:flex; gap:0.75rem; margin-bottom:2rem; flex-wrap:wrap;">
+  <a href="{% url 'add_student_project' %}" class="btn btn-primary">+ Add My Project</a>
+  <a href="{% url 'search_project' %}" class="btn btn-secondary">🔍 Search Projects</a>
+  <a href="{% url 'add_project' %}" class="btn btn-secondary">+ Add to Database</a>
+</div>
+
+<div class="grid-2" style="gap:2rem; align-items:start;">
+  <!-- MY PROJECTS -->
+  <div>
+    <div class="section-label">📁 My Project Progress</div>
+    {% if my_projects %}
+      {% for sp in my_projects %}
+      <div class="card">
+        <div class="card-title">{{ sp.title }}</div>
+        <div class="card-meta">{{ sp.created_at|date:"M d, Y" }}</div>
+        {% if sp.project %}
+          <div style="margin-bottom:0.5rem;">
+            <span class="badge badge-blue">Linked: {{ sp.project.title }}</span>
+          </div>
+        {% endif %}
+        <div class="card-body">
+          <strong style="color:var(--text); font-size:0.82rem; font-family:var(--mono);">PROGRESS:</strong><br>
+          {{ sp.progress }}
+        </div>
+        <div style="margin-top:0.75rem;" class="card-body">
+          <strong style="color:var(--accent2); font-size:0.82rem; font-family:var(--mono);">WHERE I STOPPED:</strong><br>
+          {{ sp.where_stopped }}
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">📭</span>
+        No projects yet.<br>
+        <a href="{% url 'add_student_project' %}" style="margin-top:0.75rem;display:inline-block;">Add your first project →</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- SUGGESTIONS -->
+  <div>
+    <div class="section-label">💡 Open Suggestions From Lecturers</div>
+    {% if suggestions %}
+      {% for s in suggestions %}
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:start; gap:0.5rem;">
+          <div class="card-title">{{ s.title }}</div>
+          <span class="badge badge-green">Open</span>
+        </div>
+        <div class="card-meta">Branch: {{ s.branch.name }}</div>
+        <div class="card-body" style="margin-bottom:0.75rem;">{{ s.description|truncatewords:20 }}</div>
+        <a href="{% url 'take_suggestion' s.id %}" class="btn btn-primary btn-sm">✓ Take This</a>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">🔔</span>
+        No open suggestions right now.
+      </div>
+    {% endif %}
+
+    {% if taken_suggestions %}
+      <hr class="divider">
+      <div class="section-label">✅ Suggestions You Took</div>
+      {% for s in taken_suggestions %}
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:start;">
+          <div class="card-title">{{ s.title }}</div>
+          <span class="badge badge-yellow">Taken</span>
+        </div>
+        <div class="card-meta">{{ s.branch.name }}</div>
+        <div class="card-body">{{ s.description|truncatewords:15 }}</div>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

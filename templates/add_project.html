@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Add Project{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>+ Add Project</h1>
+  <p>// Contribute to the project database</p>
+</div>
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" name="title" value="{{ form.title.value|default:'' }}" required placeholder="Project title">
+      {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description" rows="4" required placeholder="Describe the project...">{{ form.description.value|default:'' }}</textarea>
+      {% if form.description.errors %}<ul class="errorlist">{% for e in form.description.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <div class="form-group">
+      <label>Recommendations</label>
+      <textarea name="recommendations" rows="3" placeholder="Optional: Tips for students working on this...">{{ form.recommendations.value|default:'' }}</textarea>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Status</label>
+        <select name="status">
+          <option value="in_progress" {% if form.status.value == 'in_progress' %}selected{% endif %}>In Progress</option>
+          <option value="completed" {% if form.status.value == 'completed' %}selected{% endif %}>Completed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Branch</label>
+        <select name="branch">
+          {% for b in form.fields.branch.queryset %}
+            <option value="{{ b.id }}">{{ b.name }}</option>
+          {% endfor %}
+        </select>
+        {% if form.branch.errors %}<ul class="errorlist">{% for e in form.branch.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Tags</label>
+      <input type="text" name="tags" value="{{ form.tags.value|default:'' }}" placeholder="AI, machine learning, python">
+      <div class="help-text">Comma-separated tags for better discoverability</div>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Project →</button>
+    <a href="javascript:history.back()" class="btn btn-secondary" style="margin-left:0.5rem;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

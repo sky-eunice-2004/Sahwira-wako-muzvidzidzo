@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Add My Project{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>📁 Log My Project</h1>
+  <p>// Track your progress and where you stopped</p>
+</div>
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Project Title</label>
+      <input type="text" name="title" required placeholder="My project name">
+      {% if form.title.errors %}<ul class="errorlist">{% for e in form.title.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <div class="form-group">
+      <label>Link to Existing Project (optional)</label>
+      <select name="project">
+        <option value="">— None —</option>
+        {% for p in form.fields.project.queryset %}
+          <option value="{{ p.id }}">{{ p.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>My Progress</label>
+      <textarea name="progress" rows="4" required placeholder="What have you done so far?"></textarea>
+      {% if form.progress.errors %}<ul class="errorlist">{% for e in form.progress.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <div class="form-group">
+      <label>Where I Stopped</label>
+      <textarea name="where_stopped" rows="4" required placeholder="What was the last thing you worked on? What's blocking you?"></textarea>
+      {% if form.where_stopped.errors %}<ul class="errorlist">{% for e in form.where_stopped.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+    </div>
+    <button type="submit" class="btn btn-primary">Save Entry →</button>
+    <a href="{% url 'student_dashboard' %}" class="btn btn-secondary" style="margin-left:0.5rem;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div style="margin-bottom:1rem;">
+  <a href="javascript:history.back()" class="btn btn-secondary btn-sm">← Back</a>
+</div>
+
+<div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:1rem; margin-bottom:1.5rem;">
+  <div>
+    <h1 style="font-size:1.75rem; font-weight:800;">{{ project.title }}</h1>
+    <div style="color:var(--text2); font-family:var(--mono); font-size:0.85rem; margin-top:0.3rem;">
+      {{ project.branch.name }} · {{ project.created_by.username }} · {{ project.created_at|date:"M d, Y" }}
+    </div>
+  </div>
+  <span class="badge {% if project.status == 'completed' %}badge-green{% else %}badge-orange{% endif %}" style="font-size:0.85rem; padding:0.4rem 1rem;">
+    {{ project.get_status_display }}
+  </span>
+</div>
+
+<div class="grid-2" style="gap:1.5rem; align-items:start;">
+  <div>
+    <div class="card">
+      <div class="section-label">📄 Description</div>
+      <p style="color:var(--text); line-height:1.7;">{{ project.description }}</p>
+    </div>
+
+    {% if project.recommendations %}
+    <div class="card" style="border-left: 3px solid var(--accent);">
+      <div class="section-label">💡 Recommendations</div>
+      <p style="color:var(--text); line-height:1.7;">{{ project.recommendations }}</p>
+    </div>
+    {% endif %}
+
+    {% if project.tags.all %}
+    <div class="card">
+      <div class="section-label">🏷️ Tags</div>
+      <div class="tags">
+        {% for t in project.tags.all %}<span class="tag">#{{ t.name }}</span>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="section-label">👩‍💻 Student Entries ({{ student_entries.count }})</div>
+    {% if student_entries %}
+      {% for sp in student_entries %}
+      <div class="card">
+        <div class="card-title">{{ sp.student.username }}</div>
+        <div class="card-meta">{{ sp.created_at|date:"M d, Y" }}</div>
+        <div class="card-body">
+          <div style="margin-bottom:0.75rem;">
+            <div style="font-size:0.75rem; font-family:var(--mono); color:var(--text2); margin-bottom:0.25rem;">PROGRESS</div>
+            {{ sp.progress }}
+          </div>
+          <div>
+            <div style="font-size:0.75rem; font-family:var(--mono); color:var(--accent2); margin-bottom:0.25rem;">WHERE STOPPED</div>
+            {{ sp.where_stopped }}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">👥</span>
+        No student entries yet.
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

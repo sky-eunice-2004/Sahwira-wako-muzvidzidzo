@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<style>
+  .hero {
+    text-align: center;
+    padding: 5rem 2rem 4rem;
+    position: relative;
+  }
+  .hero-tag {
+    display: inline-block;
+    background: rgba(79,255,176,0.1);
+    border: 1px solid rgba(79,255,176,0.3);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .hero h1 em { color: var(--accent); font-style: normal; }
+  .hero p {
+    color: var(--text2);
+    font-size: 1.1rem;
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-family: var(--mono);
+    font-size: 0.95rem;
+  }
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .hero-actions .btn { padding: 0.75rem 2rem; font-size: 1rem; }
+  .features { margin-top: 5rem; }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+  }
+  .feature-icon { font-size: 2rem; margin-bottom: 1rem; display: block; }
+  .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .feature-card p { color: var(--text2); font-size: 0.875rem; }
+  .section-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+  .section-title span { color: var(--accent); }
+  .grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
+    background-size: 40px 40px;
+    opacity: 0.5;
+    pointer-events: none;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+  }
+</style>
+<div class="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-tag">🇿🇼 Student Project System · Zimbabwe</div>
+  <h1>Your <em>academic companion</em><br>in projects</h1>
+  <p>Sahwira connects students with projects, tracks progress, and enables lecturers to guide — all in one place.</p>
+  <div class="hero-actions">
+    {% if user.is_authenticated %}
+      {% with role=user.profile.role %}
+        {% if role == 'lecturer' %}
+          <a href="{% url 'lecturer_dashboard' %}" class="btn btn-primary">Lecturer Dashboard →</a>
+        {% else %}
+          <a href="{% url 'student_dashboard' %}" class="btn btn-primary">Student Dashboard →</a>
+        {% endif %}
+      {% endwith %}
+      <a href="{% url 'search_project' %}" class="btn btn-secondary">🔍 Search Projects</a>
+    {% else %}
+      <a href="{% url 'register' %}" class="btn btn-primary">Get Started →</a>
+      <a href="{% url 'login' %}" class="btn btn-secondary">Login</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="features">
+  <div class="section-title">Built for <span>students & lecturers</span></div>
+  <div class="grid-3">
+    <div class="feature-card">
+      <span class="feature-icon">🔍</span>
+      <h3>Smart Search</h3>
+      <p>Find projects by title, description, or tags. Case-insensitive search with similarity matching.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📈</span>
+      <h3>Track Progress</h3>
+      <p>Students log what they've done and where they stopped — never lose track of your work again.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💡</span>
+      <h3>Lecturer Suggestions</h3>
+      <p>Lecturers post project ideas by branch. Students can take suggestions and get started fast.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🌿</span>
+      <h3>Branch System</h3>
+      <p>Projects organized by branch: AI, Web Dev, Cybersecurity, Networking, and more.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤝</span>
+      <h3>Project Sharing</h3>
+      <p>Students and lecturers both contribute projects. Build a collective knowledge base.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏷️</span>
+      <h3>Tag-Based Discovery</h3>
+      <p>Tag your projects with keywords. Discover related work from classmates automatically.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

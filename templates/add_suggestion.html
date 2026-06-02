@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Add Suggestion{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>💡 Add Suggestion</h1>
+  <p>// Create a project suggestion for students</p>
+</div>
+<div class="form-card">
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Suggestion Title</label>
+      <input type="text" name="title" required placeholder="e.g. Build a chatbot using Python">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea name="description" rows="5" required placeholder="Describe what the student should build, what technologies to use, and expected outcomes..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Branch</label>
+      <select name="branch">
+        {% for b in form.fields.branch.queryset %}
+          <option value="{{ b.id }}">{{ b.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Post Suggestion →</button>
+    <a href="{% url 'lecturer_dashboard' %}" class="btn btn-secondary" style="margin-left:0.5rem;">Cancel</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>🔍 Search Projects</h1>
+  <p>// Case-insensitive · tag-based · full-text</p>
+</div>
+
+<form method="get" action="{% url 'search_project' %}">
+  <div class="search-bar">
+    <input type="text" name="q" value="{{ query|default:'' }}" placeholder="Search by title, description, or tags..." autofocus>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </div>
+</form>
+
+{% if query %}
+  {% if not_found %}
+    <div style="text-align:center; padding:4rem 1rem;">
+      <div style="font-size:3rem; margin-bottom:1rem;">🔎</div>
+      <div style="font-size:1.2rem; font-weight:700; margin-bottom:0.5rem;">No projects found</div>
+      <div style="color:var(--text2); font-family:var(--mono); font-size:0.875rem; margin-bottom:1.5rem;">
+        No results for "<strong>{{ query }}</strong>" — try different keywords or tags.
+      </div>
+      <a href="{% url 'add_project' %}" class="btn btn-primary">+ Add This Project</a>
+    </div>
+  {% else %}
+    <div class="section-label">{{ projects.count }} result{{ projects.count|pluralize }} for "{{ query }}"</div>
+    {% for p in projects %}
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:start; flex-wrap:wrap; gap:0.5rem;">
+        <div class="card-title">
+          <a href="{% url 'project_detail' p.id %}" style="color:var(--text);">{{ p.title }}</a>
+        </div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+          <span class="badge badge-blue">{{ p.branch.name }}</span>
+          <span class="badge {% if p.status == 'completed' %}badge-green{% else %}badge-orange{% endif %}">
+            {{ p.get_status_display }}
+          </span>
+        </div>
+      </div>
+      <div class="card-meta">Added by {{ p.created_by.username }} · {{ p.created_at|date:"M d, Y" }}</div>
+      <div class="card-body" style="margin-bottom:0.75rem;">{{ p.description|truncatewords:40 }}</div>
+      {% if p.recommendations %}
+      <div style="background:rgba(79,255,176,0.05); border-left:3px solid var(--accent); padding:0.6rem 0.9rem; border-radius:0 8px 8px 0; margin-bottom:0.75rem;">
+        <div style="font-size:0.75rem; font-family:var(--mono); color:var(--accent); margin-bottom:0.25rem;">RECOMMENDATIONS</div>
+        <div style="font-size:0.875rem; color:var(--text);">{{ p.recommendations|truncatewords:25 }}</div>
+      </div>
+      {% endif %}
+      {% if p.tags.all %}
+      <div class="tags">
+        {% for t in p.tags.all %}<span class="tag">#{{ t.name }}</span>{% endfor %}
+      </div>
+      {% endif %}
+      <div style="margin-top:0.75rem;">
+        <a href="{% url 'project_detail' p.id %}" class="btn btn-secondary btn-sm">View Details →</a>
+      </div>
+    </div>
+    {% endfor %}
+  {% endif %}
+{% else %}
+  <div class="empty-state">
+    <span class="icon">✨</span>
+    Type something above to find projects.
+  </div>
+{% endif %}
+{% endblock %}

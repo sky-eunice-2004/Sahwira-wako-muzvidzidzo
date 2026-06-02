@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}Lecturer Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>📋 Lecturer Dashboard</h1>
+  <p>// {{ user.first_name|default:user.username }} · manage projects & suggestions</p>
+</div>
+
+<div class="grid-3" style="margin-bottom:2rem;">
+  <div class="stat-box">
+    <div class="stat-num">{{ projects.count }}</div>
+    <div class="stat-label">Total Projects</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num">{{ my_suggestions.count }}</div>
+    <div class="stat-label">My Suggestions</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-num">{{ branches.count }}</div>
+    <div class="stat-label">Branches</div>
+  </div>
+</div>
+
+<div style="display:flex; gap:0.75rem; margin-bottom:2rem; flex-wrap:wrap;">
+  <a href="{% url 'add_project' %}" class="btn btn-primary">+ Add Project</a>
+  <a href="{% url 'add_suggestion' %}" class="btn btn-secondary">+ Add Suggestion</a>
+  <a href="{% url 'search_project' %}" class="btn btn-secondary">🔍 Search</a>
+</div>
+
+<div class="grid-2" style="gap:2rem; align-items:start;">
+  <!-- ALL PROJECTS -->
+  <div>
+    <div class="section-label">📦 All Projects in System</div>
+    {% if projects %}
+      {% for p in projects %}
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:start; gap:0.5rem; flex-wrap:wrap;">
+          <div class="card-title"><a href="{% url 'project_detail' p.id %}" style="color:var(--text);">{{ p.title }}</a></div>
+          <span class="badge {% if p.status == 'completed' %}badge-green{% else %}badge-orange{% endif %}">
+            {{ p.get_status_display }}
+          </span>
+        </div>
+        <div class="card-meta">{{ p.branch.name }} · Added by {{ p.created_by.username }} · {{ p.created_at|date:"M Y" }}</div>
+        <div class="card-body">{{ p.description|truncatewords:20 }}</div>
+        {% if p.tags.all %}
+        <div class="tags">
+          {% for t in p.tags.all %}<span class="tag">#{{ t.name }}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">📭</span>
+        No projects yet. <a href="{% url 'add_project' %}">Add one →</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- MY SUGGESTIONS -->
+  <div>
+    <div class="section-label">💡 My Suggestions</div>
+    {% if my_suggestions %}
+      {% for s in my_suggestions %}
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:start; gap:0.5rem;">
+          <div class="card-title">{{ s.title }}</div>
+          <span class="badge {% if s.is_taken %}badge-yellow{% else %}badge-green{% endif %}">
+            {% if s.is_taken %}Taken{% else %}Open{% endif %}
+          </span>
+        </div>
+        <div class="card-meta">{{ s.branch.name }} · {{ s.created_at|date:"M d, Y" }}</div>
+        <div class="card-body">{{ s.description|truncatewords:20 }}</div>
+        {% if s.is_taken and s.taken_by %}
+          <div style="margin-top:0.5rem; font-size:0.78rem; font-family:var(--mono); color:var(--accent3);">
+            ✓ Taken by {{ s.taken_by.username }}
+          </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <span class="icon">💬</span>
+        No suggestions yet.<br>
+        <a href="{% url 'add_suggestion' %}" style="margin-top:0.75rem;display:inline-block;">Add a suggestion →</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
